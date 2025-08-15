@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useDropzone } from 'react-dropzone'
 import { toast } from 'react-hot-toast'
@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from 'react-query'
 import { apiService } from '@/lib/api'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { ArrowLeft, Upload, Camera, FileImage, Loader2 } from 'lucide-react'
 
 interface ReceiptData {
@@ -17,11 +18,60 @@ interface ReceiptData {
   description: string
 }
 
+export interface Budget {
+  id: string;
+  name: string;
+  amount: number;
+  spent_amount: number;
+  remaining_amount: number; // This comes from your backend query
+  currency: string;
+  start_date: string;
+  end_date: string;
+  is_active: boolean;
+  status: 'safe' | 'warning' | 'critical'; // This also comes from the backend
+  // Joined card details
+  card_number: string;
+  card_type: string;
+  card_holder_name: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+}
+
 export default function ScanReceiptPage() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [extractedData, setExtractedData] = useState<ReceiptData | null>(null)
   const [processing, setProcessing] = useState(false)
+
+  const [selectedBudgetId, setSelectedBudgetId] = useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+
+  //fetch data for the dropdowns when the extracted data is available
+  useEffect(() => {
+    if (extractedData) {
+      const fetchDataForDropdowns = async () => {
+        try {
+          const [budgetsRes, categoriesRes] = await Promise.all([
+            apiService.getBudgets({ isActive: true }), // Fetch only active budgets
+            apiService.getCategories(),]);
+          setBudgets(budgetsRes.data.budgets);
+          setCategories(categoriesRes.data.categories);
+        } catch (error) {
+          toast.error("Could not load budgets or categories.");
+        }
+      };
+      fetchDataForDropdowns();
+    }
+  }, [extractedData]);
+
   const router = useRouter()
   const queryClient = useQueryClient()
 
@@ -70,7 +120,7 @@ export default function ScanReceiptPage() {
     try {
       const formData = new FormData()
       formData.append('receipt', uploadedFile)
-      
+
       await uploadReceiptMutation.mutateAsync(formData)
     } finally {
       setProcessing(false)
@@ -92,17 +142,18 @@ export default function ScanReceiptPage() {
   )
 
   const handleCreateTransaction = async (formData: any) => {
-    if (!extractedData) return
+    if (!extractedData || !selectedBudgetId || !selectedCategoryId) {
+      toast.error('Please select a budget and category');
+      return
+    }
 
     try {
       await createTransactionMutation.mutateAsync({
-        ...formData,
+        budgetId: selectedBudgetId,
+        categoryId: selectedCategoryId,
         amount: extractedData.totalAmount,
         description: extractedData.description,
-        transactionDate: extractedData.transactionDate,
-        // You would need to get budgetId and categoryId from user selection
-        budgetId: formData.budgetId,
-        categoryId: formData.categoryId,
+        transactionDate: extractedData.transactionDate
       })
     } catch (error) {
       console.error('Error creating transaction:', error)
@@ -151,7 +202,12 @@ export default function ScanReceiptPage() {
                       className="max-w-full h-64 object-contain mx-auto rounded-lg border"
                     />
                     <p className="text-sm text-gray-600">
-                      {uploadedFile?.name} ({(uploadedFile?.size / 1024 / 1024).toFixed(2)} MB)
+                      {/* First, check if uploadedFile exists before trying to access its properties */}
+                      {uploadedFile && (
+                        <>
+                          {uploadedFile.name} ({(uploadedFile.size / 1024 / 1024).toFixed(2)} MB)
+                        </>
+                      )}
                     </p>
                   </div>
                 ) : (
@@ -266,6 +322,25 @@ export default function ScanReceiptPage() {
                     placeholder="Transaction description"
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Budget</label>
+                  <Select onValueChange={setSelectedBudgetId} value={selectedBudgetId} required>
+                    <SelectTrigger><SelectValue placeholder="Select a budget" /></SelectTrigger>
+                    <SelectContent>
+                      {budgets.map(b => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                  <Select onValueChange={setSelectedCategoryId} value={selectedCategoryId} required>
+                    <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
+                    <SelectContent>
+                      {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
 
                 <div className="flex space-x-4">
                   <Button
@@ -280,13 +355,11 @@ export default function ScanReceiptPage() {
                     Scan Another
                   </Button>
                   <Button
-                    onClick={() => handleCreateTransaction({
-                      budgetId: 'default-budget-id', // You'd need to get this from user selection
-                      categoryId: 'default-category-id', // You'd need to get this from user selection
-                    })}
+                    onClick={handleCreateTransaction}
                     className="flex-1"
+                    disabled={createTransactionMutation.isLoading}
                   >
-                    Create Transaction
+                    {createTransactionMutation.isLoading ? 'Creating...' : 'Create Transaction'}
                   </Button>
                 </div>
               </div>

@@ -18,6 +18,7 @@ import {
   ArcElement,
 } from 'chart.js'
 import { Bar, Doughnut } from 'react-chartjs-2'
+import { AxiosResponse } from 'axios'; 
 
 ChartJS.register(
   CategoryScale,
@@ -29,57 +30,134 @@ ChartJS.register(
   ArcElement
 )
 
+
+export interface AnalyticsOverview {
+  period: {
+    start: string;
+    end: string;
+    name: string;
+  };
+  spending: {
+    total: number;
+    count: number;
+    average: number;
+  };
+  budget: {
+    total: number;
+    spent: number;
+    remaining: number;
+    percentage: number;
+    activeCount: number;
+  };
+}
+
+export interface AnalyticsCategory {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  totalSpent: number;
+  transactionCount: number;
+  averageAmount: number;
+}
+
+export interface AnalyticsTrend {
+  date: string;
+  totalSpent: number;
+  transactionCount: number;
+}
+
+export interface AnalyticsInsight {
+  period: {
+    start: string;
+    end: string;
+    name: string;
+  };
+  topCategories: Array<{
+    name: string;
+    icon: string;
+    color: string;
+    totalSpent: number;
+  }>;
+  largestTransactions: Array<{
+    amount: number;
+    description: string;
+    transactionDate: string;
+    categoryName: string;
+    icon: string;
+  }>;
+  patterns: Array<{
+    dayOfWeek: number;
+    hourOfDay: number;
+    transactionCount: number;
+    totalSpent: number;
+  }>;
+  budgetAlerts: Array<{
+    name: string;
+    amount: number;
+    spentAmount: number;
+    currency: string;
+    percentageUsed: number;
+  }>;
+}
+
 export default function AnalyticsPage() {
   const [period, setPeriod] = useState('month')
   const router = useRouter()
 
-  const { data: overviewData, isLoading: overviewLoading } = useQuery(
+  const { data: overview, isLoading: overviewLoading } = useQuery<AnalyticsOverview>(
     ['analytics-overview', period],
-    () => apiService.getAnalyticsOverview({ period }),
-    { staleTime: 5 * 60 * 1000 } // 5 minutes
+    () => apiService.getAnalyticsOverview({ period }).then(res => res.data.overview),
+    { 
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      
+     } 
   )
 
-  const { data: categoriesData, isLoading: categoriesLoading } = useQuery(
+  const { data: categories, isLoading: categoriesLoading } = useQuery<AnalyticsCategory[]>(
     ['analytics-categories', period],
-    () => apiService.getAnalyticsCategories({ period }),
-    { staleTime: 5 * 60 * 1000 }
+    () => apiService.getAnalyticsCategories({ period }).then(res => res.data.categories),
+    { 
+      staleTime: 5 * 60 * 1000,
+      
+    }
   )
 
-  const { data: trendsData, isLoading: trendsLoading } = useQuery(
+  const { data: trends, isLoading: trendsLoading } = useQuery<AnalyticsTrend[]>(
     ['analytics-trends', period],
-    () => apiService.getAnalyticsTrends({ period, groupBy: 'day' }),
-    { staleTime: 5 * 60 * 1000 }
+    () => apiService.getAnalyticsTrends({ period, groupBy: 'day' }).then(res => res.data.trends),
+    { 
+      staleTime: 5 * 60 * 1000,
+      
+    }
   )
 
-  const { data: insightsData, isLoading: insightsLoading } = useQuery(
+  const { data: insights, isLoading: insightsLoading } = useQuery<AnalyticsInsight>(
     ['analytics-insights', period],
-    () => apiService.getAnalyticsInsights({ period }),
-    { staleTime: 5 * 60 * 1000 }
+    () => apiService.getAnalyticsInsights({ period }).then(res => res.data.insights),
+    {
+      staleTime: 5 * 60 * 1000, 
+      
+    }
   )
-
-  const overview = overviewData?.overview
-  const categories = categoriesData?.categories || []
-  const trends = trendsData?.trends || []
-  const insights = insightsData?.insights
-
   // Prepare chart data
   const categoryChartData = {
-    labels: categories.map(cat => cat.name),
+    labels: (categories || []).map((cat: AnalyticsCategory) => cat.name),
     datasets: [
       {
-        data: categories.map(cat => cat.totalSpent),
-        backgroundColor: categories.map(cat => cat.color),
+        data: (categories || []).map((cat: AnalyticsCategory) => cat.totalSpent),
+        backgroundColor: (categories || []).map((cat: AnalyticsCategory) => cat.color),
         borderWidth: 0,
       },
     ],
   }
 
   const trendsChartData = {
-    labels: trends.map(trend => trend.date),
+    labels: (trends || []).map((trend: AnalyticsTrend) => trend.date),
     datasets: [
       {
         label: 'Daily Spending',
-        data: trends.map(trend => trend.totalSpent),
+        data: (trends || []).map((trend: AnalyticsTrend) => trend.totalSpent),
         backgroundColor: 'rgba(59, 130, 246, 0.5)',
         borderColor: 'rgba(59, 130, 246, 1)',
         borderWidth: 2,

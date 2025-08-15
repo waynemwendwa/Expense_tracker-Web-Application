@@ -37,7 +37,8 @@ yarn.lock
 *.dylib
 *.class
 *.jar
-
+uploads/
+eng.traineddata
 
 
             
