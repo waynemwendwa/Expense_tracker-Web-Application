@@ -45,6 +45,8 @@ export const endpoints = {
     login: '/auth/login',
     register: '/auth/register',
     profile: '/auth/profile',
+    verifyEmail: '/auth/verify-email',
+    resendCode: '/auth/resend-code',
   },
   
   // Users
@@ -123,6 +125,12 @@ export const apiService = {
   
   getProfile: () =>
     api.get(endpoints.auth.profile),
+
+  verifyEmail: (data: { email: string | null, code: string }) =>
+    api.post(endpoints.auth.verifyEmail, data),
+
+  resendVerificationCode: (data: { email: string | null }) =>
+    api.post(endpoints.auth.resendCode, data),
   
   // Users
   updateProfile: (userData: any) =>

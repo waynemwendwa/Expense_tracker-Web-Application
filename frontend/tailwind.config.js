@@ -64,6 +64,7 @@ module.exports = {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.3s ease-out',
         'bounce-in': 'bounceIn 0.6s ease-out',
+        "caret-blink": "caret-blink 1.25s ease-out infinite",
       },
       keyframes: {
         fadeIn: {
@@ -79,6 +80,10 @@ module.exports = {
           '50%': { transform: 'scale(1.05)' },
           '70%': { transform: 'scale(0.9)' },
           '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        "caret-blink": {
+           '0%,70%,100%': { opacity: "1" },
+          '20%,50%': { opacity: "0" },
         },
       },
     },

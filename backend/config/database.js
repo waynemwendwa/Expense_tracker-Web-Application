@@ -44,6 +44,9 @@ async function createTables() {
         password_hash VARCHAR(255) NOT NULL,
         first_name VARCHAR(100) NOT NULL,
         last_name VARCHAR(100) NOT NULL,
+        is_verified BOOLEAN DEFAULT false,
+        verification_code TEXT,
+        verification_code_expires TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )

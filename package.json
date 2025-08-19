@@ -32,6 +32,8 @@
     "@radix-ui/react-popover": "^1.1.14",
     "@radix-ui/themes": "^3.2.1",
     "cors": "^2.8.5",
-    "date-fns": "^4.1.0"
+    "date-fns": "^4.1.0",
+    "input-otp": "^1.4.2",
+    "otp-input-react": "^0.3.0"
   }
 }

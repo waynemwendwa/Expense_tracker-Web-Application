@@ -11,10 +11,13 @@
   "dependencies": {
     "axios": "^1.6.2",
     "chart.js": "^4.5.0",
-    "clsx": "^2.0.0",
+    "clsx": "^2.1.1",
     "date-fns": "^2.30.0",
+    "input-otp": "^1.4.2",
     "lucide-react": "^0.294.0",
+    "motion": "^12.23.12",
     "next": "14.0.4",
+    "otp-input-react": "^0.3.0",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.3.0",
     "react-datepicker": "^4.25.0",
@@ -24,7 +27,7 @@
     "react-hot-toast": "^2.4.1",
     "react-query": "^3.39.3",
     "socket.io-client": "^4.7.4",
-    "tailwind-merge": "^2.2.0"
+    "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.4",

@@ -33,7 +33,13 @@ export default function LoginPage() {
       await login(data.email, data.password)
       toast.success('Welcome back!')
     } catch (error: any) {
-      toast.error(error.message || 'Login failed')
+      if (error.response?.data?.code === 'ACCOUNT_NOT_VERIFIED') {
+        toast.error('Please verify your email before logging in.')
+        router.push(`/verify-email?email=${data.email}`)
+      }else{
+        toast.error(error.message || 'Login failed')
+      }
+      
     } finally {
       setLoading(false)
     }

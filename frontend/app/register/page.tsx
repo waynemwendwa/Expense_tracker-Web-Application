@@ -49,6 +49,7 @@ export default function RegisterPage() {
         password: data.password,
       })
       toast.success('Account created successfully!')
+      router.push(`/verify-email?email=${data.email}`);
     } catch (error: any) {
       toast.error(error.message || 'Registration failed')
     } finally {
