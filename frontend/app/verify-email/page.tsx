@@ -50,10 +50,6 @@ export default function VerifyEmailPage() {
       toast.error(error.response?.data?.error || "Verification failed.");
     } finally {
       setIsLoading(false);
-      router.replace('/'); // Clear the URL to prevent resubmission
-      setCode(''); // Clear the code input
-      router.refresh(); // Refresh the page to ensure state is reset
-      router.push('/'); // Redirect to home after verification
     }
   };
 

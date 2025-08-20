@@ -4,13 +4,24 @@ const Joi = require('joi');
 const { generateToken, authenticateToken } = require('../middleware/auth');
 const { query, pool } = require('../config/database');
 const { sendVerificationCode } = require('../utils/email');
+const passwordComplexity = require('joi-password-complexity');
 
 const router = express.Router();
+
+const complexityOptions = {
+  min: 8,
+  max: 30,
+  lowerCase: 1,
+  upperCase: 1,
+  numeric: 1,
+  symbol: 1,
+  requirementCount: 4, // Require 4 out of the 5 conditions
+};
 
 // Validation schemas
 const registerSchema = Joi.object({
   email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
+  password: passwordComplexity(complexityOptions).required(),
   firstName: Joi.string().min(2).max(100).required(),
   lastName: Joi.string().min(2).max(100).required()
 });
@@ -73,20 +84,9 @@ router.post('/register', async (req, res) => {
 
     //send plain text verification code to user's email
     await sendVerificationCode(email, verificationCode);
-
-
-    // const user = result.rows[0];
-    // const token = generateToken(user);//creates JWT
-
     res.status(201).json({
       message: 'User registered successfully.Please check your email for the verification code.'
-      // user: {
-      //   id: user.id,
-      //   email: user.email,
-      //   firstName: user.first_name,
-      //   lastName: user.last_name
-      // },
-      // token
+      
     });
   } catch (error) {
     console.error('Registration error:', error);
