@@ -19,6 +19,7 @@ import {
 } from 'chart.js'
 import { Bar, Doughnut } from 'react-chartjs-2'
 import { AxiosResponse } from 'axios'; 
+import { useAuth } from '@/contexts/AuthContext'
 
 ChartJS.register(
   CategoryScale,
@@ -102,6 +103,7 @@ export interface AnalyticsInsight {
 }
 
 export default function AnalyticsPage() {
+  const { user } = useAuth() // Assuming useAuth is a custom hook to get user context
   const [period, setPeriod] = useState('month')
   const router = useRouter()
 
@@ -190,7 +192,7 @@ export default function AnalyticsPage() {
         beginAtZero: true,
         ticks: {
           callback: function(value: any) {
-            return formatCurrency(value)
+            return formatCurrency(value, user?.preferredCurrency)
           }
         }
       }
@@ -255,7 +257,7 @@ export default function AnalyticsPage() {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Total Spent</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {formatCurrency(overview.spending.total)}
+                    {formatCurrency(overview.spending.total, user?.preferredCurrency)}
                   </p>
                 </div>
               </div>
@@ -283,7 +285,7 @@ export default function AnalyticsPage() {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Average</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {formatCurrency(overview.spending.average)}
+                    {formatCurrency(overview.spending.average, user?.preferredCurrency)}
                   </p>
                 </div>
               </div>
@@ -347,7 +349,7 @@ export default function AnalyticsPage() {
                       <span className="font-medium text-gray-900">{category.name}</span>
                     </div>
                     <span className="font-semibold text-gray-900">
-                      {formatCurrency(category.totalSpent)}
+                      {formatCurrency(category.totalSpent, user?.preferredCurrency)}
                     </span>
                   </div>
                 ))}
@@ -371,7 +373,7 @@ export default function AnalyticsPage() {
                       </div>
                     </div>
                     <span className="font-semibold text-gray-900">
-                      {formatCurrency(transaction.amount)}
+                      {formatCurrency(transaction.amount, user?.preferredCurrency)}
                     </span>
                   </div>
                 ))}
@@ -398,10 +400,10 @@ export default function AnalyticsPage() {
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-gray-900">
-                      {formatCurrency(alert.spentAmount)} / {formatCurrency(alert.amount)}
+                      {formatCurrency(alert.spentAmount, user?.preferredCurrency)} / {formatCurrency(alert.amount, user?.preferredCurrency)}
                     </p>
                     <p className="text-sm text-gray-600">
-                      {formatCurrency(alert.amount - alert.spentAmount)} remaining
+                      {formatCurrency(alert.amount - alert.spentAmount, user?.preferredCurrency)} remaining
                     </p>
                   </div>
                 </div>

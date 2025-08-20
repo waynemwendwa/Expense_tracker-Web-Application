@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { apiService } from '@/lib/api'; // <--- IMPORT YOUR API SERVICE
+import { apiService } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
@@ -24,13 +24,12 @@ export interface Budget {
     name: string;
     amount: number;
     spent_amount: number;
-    remaining_amount: number; // This comes from your backend query
+    remaining_amount: number;
     currency: string;
     start_date: string;
     end_date: string;
     is_active: boolean;
-    status: 'safe' | 'warning' | 'critical'; // This also comes from the backend
-    // Joined card details
+    status: 'safe' | 'warning' | 'critical'; 
     card_number: string;
     card_type: string;
     card_holder_name: string;
@@ -55,7 +54,7 @@ export const AddTransactionDialog: React.FC<AddTransactionDialogProps> = ({ onTr
     const [amount, setAmount] = useState('');
     const [description, setDescription] = useState('');
     const [transactionDate, setTransactionDate] = useState(new Date().toISOString().split('T')[0]);
-    // ... other form states
+    
 
     // Data for dropdowns
     const [budgets, setBudgets] = useState<Budget[]>([]);
@@ -118,7 +117,6 @@ export const AddTransactionDialog: React.FC<AddTransactionDialogProps> = ({ onTr
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            {/* ... The rest of your JSX remains exactly the same ... */}
              <DialogTrigger asChild>
                 <Button>
                     <PlusCircle className="w-4 h-4 mr-2" />

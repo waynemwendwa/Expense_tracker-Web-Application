@@ -47,6 +47,7 @@ async function createTables() {
         is_verified BOOLEAN DEFAULT false,
         verification_code TEXT,
         verification_code_expires TIMESTAMP,
+        preferred_currency VARCHAR(3) DEFAULT 'USD',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )

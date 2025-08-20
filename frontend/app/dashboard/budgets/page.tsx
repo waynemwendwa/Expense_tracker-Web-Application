@@ -1,6 +1,6 @@
 'use client'
 
-import { BudgetForm } from '@/components/BudgetForm'; // We will create this next
+import { BudgetForm } from '@/components/BudgetForm';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';

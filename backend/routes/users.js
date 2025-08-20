@@ -56,7 +56,7 @@ router.put('/profile', async (req, res) => {
     }
 
     const userId = req.user.id;
-    const { firstName, lastName, email } = value;
+    const { firstName, lastName, email}= value;
 
     // Check if email is already taken by another user to prevent duplicate meail registrations
     if (email) {
@@ -86,6 +86,7 @@ router.put('/profile', async (req, res) => {
       updateFields.push(`email = $${paramCount++}`);
       params.push(email);
     }
+  
 
     if (updateFields.length === 0) {
       return res.status(400).json({ error: 'No fields to update' });

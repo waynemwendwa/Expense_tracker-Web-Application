@@ -1,10 +1,11 @@
 'use client'
 
 import React from 'react';
-import { apiService } from '@/lib/api'; // <--- IMPORT YOUR API SERVICE
+import { apiService } from '@/lib/api'; 
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/Button';
 import { Trash2, Edit, Receipt } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils'
 
 
 export interface Transaction {
@@ -15,7 +16,6 @@ export interface Transaction {
   location?: string;
   tags?: string[];
   created_at: string;
-  // Joined data from the backend
   category_name: string;
   category_icon: string;
   category_color: string;
@@ -30,14 +30,8 @@ interface TransactionListProps {
   onTransactionAction: () => void; // A more generic name for refresh
 }
 
-
-// Helper to format currency
-const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);
-}
-
 export const TransactionList: React.FC<TransactionListProps> = ({ transactions, isLoading, onTransactionAction }) => {
-  // We no longer need useAuth here at all!
+  
   if (isLoading) {
     return <div className="text-center py-8 text-gray-500">Loading transactions...</div>;
 }
@@ -57,7 +51,6 @@ export const TransactionList: React.FC<TransactionListProps> = ({ transactions, 
     }
     const toastId = toast.loading('Deleting transaction...');
     try {
-      // Use the apiService function directly
       await apiService.deleteTransaction(transactionId);
       toast.success('Transaction deleted!', { id: toastId });
       onTransactionAction(); // Refresh the list
@@ -65,10 +58,6 @@ export const TransactionList: React.FC<TransactionListProps> = ({ transactions, 
       toast.error(error.response?.data?.error || "Failed to delete transaction.", { id: toastId });
     }
   }
-  
-  // ... The rest of your JSX remains exactly the same ...
-  // Make sure to update the delete button's onClick:
-  // onClick={() => handleDelete(t.id)}
   return (
     <ul className="space-y-3">
       {transactions.map(t => (
@@ -78,7 +67,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({ transactions, 
               className="w-10 h-10 rounded-full flex items-center justify-center text-white" 
               style={{ backgroundColor: t.category_color || '#cccccc' }}
             >
-              {/* You can map t.category_icon to actual Lucide icons later if you want */}
+             
               <Receipt className="w-5 h-5" />
             </div>
             <div className="flex-grow">

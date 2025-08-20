@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/Label';
 
 export interface Card {
   id: string;
-  card_number: string; // This is the masked number
+  card_number: string; 
   card_type: 'visa' | 'mastercard' | 'amex' | 'discover';
   expiry_date: string;
   card_holder_name: string;
@@ -23,7 +23,7 @@ export interface Card {
 }
 
 export const BudgetForm = () => {
-    const { getAuthHeaders } = useAuth(); // Assuming your context provides a helper for auth headers
+    const { getAuthHeaders } = useAuth(); 
     const router = useRouter();
 
     const [cards, setCards] = useState<Card[]>([]);
@@ -113,7 +113,7 @@ export const BudgetForm = () => {
             </div>
 
             <div>
-                <Label htmlFor="amount">Amount (USD)</Label>
+                <Label htmlFor="amount">Amount (KSH)</Label>
                 <Input id="amount" type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="e.g., 500" required />
             </div>
 

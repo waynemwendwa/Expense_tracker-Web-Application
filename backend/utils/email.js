@@ -1,7 +1,6 @@
-// utils/email.js
 const sgMail = require('@sendgrid/mail');
 
-// Set the API Key from your .env file
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendVerificationCode = async (toEmail, code) => {
@@ -30,8 +29,7 @@ const sendVerificationCode = async (toEmail, code) => {
     if (error.response) {
       console.error(error.response.body)
     }
-    // We don't want the entire registration to fail if the email fails,
-    // but in a real app you might want to handle this more robustly.
+  
   }
 };
 

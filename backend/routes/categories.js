@@ -8,8 +8,7 @@ const router = express.Router();
 // Fetches all available spending categories
 router.get('/', async (req, res) => {
   try {
-    // A simple query to get all categories from the database table.
-    // We order by name to keep the list consistent.
+    // Query to get all categories
     const result = await query(
       'SELECT id, name, icon, color FROM categories ORDER BY name ASC'
     );

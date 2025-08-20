@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/Button';
 import { User, LogOut, Settings } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar" // Add this component too!
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar" 
 
 
 
@@ -32,8 +32,6 @@ export const UserNav = () => {
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-9 w-9">
-                        {/* You can add an AvatarImage component here if you store profile pictures */}
-                        {/* <AvatarImage src={USER} alt="@shadcn" /> */}
                         <AvatarFallback>{getInitials(user.firstName, user.lastName)}</AvatarFallback>
                     </Avatar>
                 </Button>

@@ -142,9 +142,6 @@ router.get('/', async (req, res) => {
     
     const sortField = validSortFields.includes(sortBy) ? sortBy : 'transaction_date';
     const order = validSortOrders.includes(String(sortOrder).toLowerCase()) ? String(sortOrder).toUpperCase() : 'DESC';
-
-    // --- START OF CHANGES ---
-
     // Define the base parts of the query
     const fromClause = `
       FROM transactions t
@@ -200,7 +197,7 @@ router.get('/', async (req, res) => {
     const dataParams = [...params, parseInt(limit), offset];
     const result = await query(dataQueryStr, dataParams);
     
-    // --- END OF CHANGES ---
+   
 
     res.json({
       transactions: result.rows,

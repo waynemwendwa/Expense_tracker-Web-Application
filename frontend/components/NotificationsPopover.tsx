@@ -15,7 +15,7 @@ export interface Notification {
   message: string;
   type: string;
   is_read: boolean;
-  data: any; // Can be more specific if you know the data shape
+  data: any; 
   created_at: string;
 }
 
@@ -31,7 +31,7 @@ const NotificationItem = ({ notification, onRead }: { notification: Notification
                 toast.error("Failed to mark as read.");
             }
         }
-        // Optional: you could add navigation here based on notification.type or notification.data
+        
     };
 
     return (

@@ -26,7 +26,7 @@ const budgetSchema = Joi.object({
   cardId: Joi.string().uuid().required(),
   name: Joi.string().min(1).max(255).required(),
   amount: Joi.number().positive().required(),
-  currency: Joi.string().length(3).default("USD"),
+  currency: Joi.string().length(3).default("KSH"),
   startDate: Joi.date().required(),
   endDate: Joi.date().greater(Joi.ref("startDate")).required(),
 });

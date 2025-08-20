@@ -9,13 +9,15 @@ import { toast } from 'react-hot-toast';
 import { apiService } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Router } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select'
 
 const UpdateProfileForm = () => {
-    const { user, loading, fetchUserProfile } = useAuth(); // Assuming fetchUserProfile exists in context
+    const { user, loading, fetchUserProfile } = useAuth(); 
     const [formData, setFormData] = React.useState({
         firstName: '',
         lastName: '',
-        email: ''
+        email: '',
+        preferredCurrency: 'USD'
     });
     const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -25,6 +27,8 @@ const UpdateProfileForm = () => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
+                preferredCurrency: user.preferredCurrency,
+
             });
         }
     }, [user]);
@@ -39,7 +43,7 @@ const UpdateProfileForm = () => {
         try {
             await apiService.updateProfile(formData);
             toast.success('Profile updated successfully!');
-            if (fetchUserProfile) await fetchUserProfile(); // Re-fetch user data in context
+            if (fetchUserProfile) await fetchUserProfile(); 
         } catch (error: any) {
             toast.error(error.response?.data?.error || "Failed to update profile.");
         } finally {
@@ -86,7 +90,7 @@ const ChangePasswordForm = () => {
         try {
             await apiService.changePassword(formData);
             toast.success('Password changed successfully!');
-            setFormData({ currentPassword: '', newPassword: '' }); // Clear form
+            setFormData({ currentPassword: '', newPassword: '' });
         } catch (error: any) {
             toast.error(error.response?.data?.error || "Failed to change password.");
         } finally {

@@ -141,11 +141,6 @@ export default function AddCardPage() {
                             type="text"
                             placeholder="1234 5678 9012 3456"
                             maxLength={19}
-
-                            // onChange={(e) => {
-                            //   const formatted = formatCardNumber(e.target.value)
-                            //   field.onChange(formatted) // Update RHF's state
-                            // }}
                             error={errors.cardNumber?.message}
                           />
                         )}

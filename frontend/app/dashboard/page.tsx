@@ -22,13 +22,12 @@ export interface Budget {
     name: string;
     amount: number;
     spent_amount: number;
-    remaining_amount: number; // This comes from your backend query
+    remaining_amount: number;
     currency: string;
     start_date: string;
     end_date: string;
     is_active: boolean;
-    status: 'safe' | 'warning' | 'critical'; // This also comes from the backend
-    // Joined card details
+    status: 'safe' | 'warning' | 'critical'; 
     card_number: string;
     card_type: string;
     card_holder_name: string;
@@ -49,7 +48,6 @@ export interface Transaction {
   location?: string;
   tags?: string[];
   created_at: string;
-  // Joined data from the backend
   category_name: string;
   category_icon: string;
   category_color: string;
@@ -90,11 +88,6 @@ const handlePermanentDelete = async (budgetId: string) => {
     toast.error(error.response?.data?.error || "Failed to delete budget.");
   }
 }
-const formatCurrency = (amount: number, currency: string) => {
-  return new Intl.NumberFormat('en-US',{ style: 'currency', currency }).format(amount);
-}
-
-
 return(
   <div className='space-y-4'>{budgets.map((budget) => (
     <div key={budget.id} className={`p-4 border rounded-lg ${!budget.is_active ? 'bg-gray-100 opacity-60' : ''}`}>
@@ -164,7 +157,7 @@ export default function DashboardPage() {
      try {
       // Promise.all is great here. We fetch everything concurrently.
       const [statsRes, budgetsRes, transactionsRes] = await Promise.all([
-        apiService.getUserStats(), // <-- Use the efficient stats endpoint!
+        apiService.getUserStats(), // Use the efficient stats endpoint!
         apiService.getBudgets(),
         apiService.getTransactions({ limit: 5, page: 1 })
       ]);
@@ -225,20 +218,10 @@ export default function DashboardPage() {
             
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 text-sm text-gray-600">
-                
-                {/* <span>Welcome, {user.firstName}!</span> */}
                 <NotificationsPopover />
                 <UserNav/>
                   
               </div>
-              {/* <Button
-                variant="ghost"
-                onClick={logout}
-                className="text-gray-600 hover:text-gray-900"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </Button> */}
             </div>
           </div>
         </div>
@@ -288,7 +271,7 @@ export default function DashboardPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">This Month</p>
-                <p className="text-2xl font-bold text-gray-900">{isDataLoading ? '...' : formatCurrency(stats?.transactions.totalSpent ?? 0, 'USD')}</p>
+                <p className="text-2xl font-bold text-gray-900">{isDataLoading ? '...' : formatCurrency(stats?.transactions.totalSpent ?? 0, user?.preferredCurrency)}</p>
               </div>
             </div>
           </div>
@@ -353,11 +336,7 @@ export default function DashboardPage() {
               <h3 className="card-title">Recent Activity</h3>
               <p className="card-subtitle">Your latest transactions</p>
             </div>
-            {/* <div className="text-center py-8">
-              <Receipt className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No transactions yet</p>
-              <p className="text-sm text-gray-400">Start by adding a transaction or scanning a receipt</p>
-            </div> */}
+          
              <div className="p-4 md:p-6">
               <TransactionList 
                 transactions={transactions} 
